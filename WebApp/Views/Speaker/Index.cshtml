@@ -1,0 +1,23 @@
+﻿@model System.Collections.Generic.List<WebApp.Models.Speaker>
+
+<div class="h3">Speakers</div>
+
+<div>
+    <table>
+        <thead>
+            <tr>
+                <td>First</td>
+                <td>Last</td>
+                <td>TenantId</td>
+            </tr>
+        </thead>
+        @foreach (var speaker in Model)
+        {
+            <tr>
+                <td>@speaker.First</td>
+                <td>@speaker.Last</td>
+                <td>@speaker.TenantId</td>
+            </tr>
+        }
+    </table>
+</div>

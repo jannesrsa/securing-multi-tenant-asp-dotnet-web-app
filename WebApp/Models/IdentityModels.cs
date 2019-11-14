@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using WebApp.Data;
 
 namespace WebApp.Models
 {
@@ -30,6 +31,8 @@ namespace WebApp.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Tenant> Tenants { get; set; }
+
+        public DbSet<Speaker> Speakers { get; set; }
 
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
@@ -111,11 +114,125 @@ namespace WebApp.Models
     }
 
     [Table("ASPNETTenants")]
-    public class Tenant
+    public class Tenant : BaseEntity
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string DomainName { get; set; }
         public bool Default { get; set; }
     }
+
+    [Table("ASPNETSpeakers")]
+    public class Speaker : BaseEntity
+    {
+        public string First { get; set; }
+        public string Last { get; set; }
+        public int TenantId { get; set; }
+    }
 }
+
+//public class ApplicationDbInitializer : CreateDatabaseIfNotExists<ApplicationDbContext>
+//{
+//    protected override void Seed(ApplicationDbContext context)
+//    {
+//        InitializeIdentityForEF(context);
+
+//        base.Seed(context);
+//    }
+
+//    public static void InitializeIdentityForEF(ApplicationDbContext db)
+//    {
+//        if (!db.Tenants.Any())
+//        {
+//            db.Tenants.AddRange(new Tenant[]
+//            {
+//                new Tenant()
+//                {
+//                    Id = 1,
+//                    Name = "SVCC",
+//                    Default = true,
+//                    DomainName = "siliconvalley-codecamp.com",
+//                },
+//                new Tenant()
+//                {
+//                    Id = 2,
+//                    Name = "ANGU",
+//                    Default = false,
+//                    DomainName = "angular.com",
+//                },
+//            });
+//        }
+
+//        if (!db.Speakers.Any())
+//        {
+//            db.Speakers.AddRange(new Speaker[]
+//            {
+//                new Speaker()
+//                {
+//                    Id = 1,
+//                    First = "Chris",
+//                    Last = "Love",
+//                    TenantId = 1,
+//                },
+//                new Speaker()
+//                {
+//                    Id = 2,
+//                    First = "Daniel",
+//                    Last = "Egan",
+//                    TenantId = 1,
+//                },
+//                new Speaker()
+//                {
+//                    Id = 3,
+//                    First = "Igor",
+//                    Last = "Minar",
+//                    TenantId = 2,
+//                },
+//                new Speaker()
+//                {
+//                    Id = 4,
+//                    First = "Brad",
+//                    Last = "Green",
+//                    TenantId = 2,
+//                },
+//                new Speaker()
+//                {
+//                    Id = 5,
+//                    First = "Misko",
+//                    Last = "Hevery",
+//                    TenantId = 2,
+//                },
+//            });
+//        }
+
+//        //var roleStore = new RoleStore<IdentityRole>(db);
+//        //var roleManager = new RoleManager<IdentityRole>(roleStore);
+//        //var userStore = new UserStore<ApplicationUser>(db);
+//        //var userManager = new UserManager<ApplicationUser>(userStore);
+
+//        //// Add missing roles
+//        //var role = roleManager.FindByName("Admin");
+//        //if (role == null)
+//        //{
+//        //    role = new IdentityRole("Admin");
+//        //    roleManager.Create(role);
+//        //}
+
+//        //// Create test users
+//        //var user = userManager.FindByName("admin");
+//        //if (user == null)
+//        //{
+//        //    var newUser = new ApplicationUser()
+//        //    {
+//        //        UserName = "admin",
+//        //        FirstName = "Admin",
+//        //        LastName = "User",
+//        //        Email = "xxx@xxx.net",
+//        //        PhoneNumber = "5551234567",
+//        //        MustChangePassword = false
+//        //    };
+//        //    userManager.Create(newUser, "Password1");
+//        //    userManager.SetLockoutEnabled(newUser.Id, false);
+//        //    userManager.AddToRole(newUser.Id, "Admin");
+//        //}
+//    }
+//}
