@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
@@ -33,6 +34,13 @@ namespace WebApp
                 LoginPath = new PathString("/Account/Login"),
                 Provider = new CookieAuthenticationProvider
                 {
+                    OnApplyRedirect = ctx =>
+                    {
+                        if (!IsApiRequest(ctx.Request))
+                        {
+                            ctx.Response.Redirect(ctx.RedirectUri);
+                        }
+                    },
                     // Enables the application to validate the security stamp when the user logs in.
                     // This is a security feature which is used when you change a password or add an external login to your account.  
                     OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
@@ -68,6 +76,12 @@ namespace WebApp
             //    ClientId = "",
             //    ClientSecret = ""
             //});
+        }
+
+        private static bool IsApiRequest(IOwinRequest request)
+        {
+            string apiPath = VirtualPathUtility.ToAbsolute("~/api/");
+            return request.Uri.LocalPath.StartsWith(apiPath);
         }
     }
 }

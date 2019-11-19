@@ -23,6 +23,7 @@ namespace WebApp.Controllers
         }
 
         // GET: api/Default
+        [Authorize]
         public async Task<IEnumerable<Speaker>> Get()
         {
             var tenant = await _tenantService.GetTenantAsync();
