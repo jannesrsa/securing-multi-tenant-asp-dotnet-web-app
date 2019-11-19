@@ -1,17 +1,21 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using WebApp.Data;
 using WebApp.Models;
+using WebApp.Services;
 
 namespace WebApp.Controllers
 {
     public class SpeakerController : Controller
     {
         private readonly IAsyncRepository<Speaker> _speakerRepository;
+        private readonly ITenantService _tenantService;
 
-        public SpeakerController(IAsyncRepository<Speaker> speakerRepository)
+        public SpeakerController(IAsyncRepository<Speaker> speakerRepository, ITenantService tenantService)
         {
             _speakerRepository = speakerRepository;
+            _tenantService = tenantService;
         }
 
         // GET: Speaker/Create
@@ -87,11 +91,17 @@ namespace WebApp.Controllers
         }
 
         // GET: Speaker
+        [Authorize]
         public async Task<ActionResult> Index()
         {
+            var tenant = await _tenantService.GetTenantAsync();
+
             var speakers = await _speakerRepository.ListAllAsync();
 
-            return View(speakers);
+            var tenantSpeakers = speakers
+                .Where(i => i.TenantId == tenant.Id);
+
+            return View(tenantSpeakers);
         }
     }
 }

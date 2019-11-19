@@ -6,6 +6,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using WebApp.Data;
 using WebApp.Models;
+using WebApp.Services;
 
 namespace WebApp
 {
@@ -23,8 +24,8 @@ namespace WebApp
             //builder.RegisterModelBinders(typeof(MvcApplication).Assembly);
             //builder.RegisterModelBinderProvider();
 
-            //// OPTIONAL: Register web abstractions like HttpContextBase.
-            //builder.RegisterModule<AutofacWebTypesModule>();
+            // OPTIONAL: Register web abstractions like HttpContextBase.
+            builder.RegisterModule<AutofacWebTypesModule>();
 
             //// OPTIONAL: Enable property injection in view pages.
             //builder.RegisterSource(new ViewRegistrationSource());
@@ -38,6 +39,8 @@ namespace WebApp
                 .InstancePerRequest();
 
             builder.RegisterType<EfRepository<Speaker>>().As<IAsyncRepository<Speaker>>();
+            builder.RegisterType<TenantRepository>().As<ITenantRepository>();
+            builder.RegisterType<TenantService>().As<ITenantService>();
 
             // Set the dependency resolver to be Autofac.
             var container = builder.Build();
