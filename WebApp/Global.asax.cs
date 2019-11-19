@@ -1,5 +1,6 @@
 using Autofac;
 using Autofac.Integration.Mvc;
+using Autofac.Integration.WebApi;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -19,6 +20,9 @@ namespace WebApp
             // Register your MVC controllers. (MvcApplication is the name of
             // the class in Global.asax.)
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
+
+            // Register your Web API controllers.
+            builder.RegisterApiControllers(typeof(MvcApplication).Assembly);
 
             //// OPTIONAL: Register model binders that require DI.
             //builder.RegisterModelBinders(typeof(MvcApplication).Assembly);
@@ -45,6 +49,7 @@ namespace WebApp
             // Set the dependency resolver to be Autofac.
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+            GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container); //Set the WebApi DependencyResolver
 
             // Standard MVC setup:
             AreaRegistration.RegisterAllAreas();
