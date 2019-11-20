@@ -2,6 +2,94 @@
     ViewBag.Title = "Home Page";
 }
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+    function register() {
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+
+        var loginData = {
+            Email: email,
+            Password: password,
+            ConfirmPassword: password
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/AccountWebApiToken/Register',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(loginData)
+        }).done(function (data) {
+            alert(`registratration success ${loginData.Email}`);
+        }).fail(function () {
+            alert(`registratration failed ${loginData.Email}`);
+        });
+    };
+
+    function getToken() {
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+
+        var tokenLoginData = {
+            grant_type: 'password',
+            username: email,
+            password: password
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/Token',
+            data: tokenLoginData
+        }).done(function (data) {
+            console.log('Token: ' + data.access_token);
+            localStorage.setItem('theToken', data.access_token);
+            alert('token: ' + data.access_token);
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.responseText);
+        });
+    };
+
+    function getAuthData() {
+        var token = localStorage.getItem('theToken');
+        var headers = {};
+        if (token) {
+            headers.Authorization = 'Bearer ' + token;
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/SpeakersWebApi',
+            headers: headers
+        }).done(function (data) {
+            alert(JSON.stringify(data));
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            alert(jqXHR.responseText);
+        });
+    };
+</script>
+
+<br />
+
+<div class="input-group">
+    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+    <input id="email" type="text" class="form-control" name="email" placeholder="Email" value="joe24@smith.com">
+</div>
+<div class="input-group">
+    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+    <input id="password" type="password" class="form-control" name="password" placeholder="Password" value="Abc123!">
+</div>
+<button class="button" onclick="register()">
+    Register Joe
+</button>
+<button class="button" onclick="getToken()">
+    Get Token
+</button>
+<button class="button" onclick="getAuthData()">
+    Get AuthData
+</button>
+
+<br />
+
 <div class="jumbotron">
     <h1>ASP.NET</h1>
     <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
