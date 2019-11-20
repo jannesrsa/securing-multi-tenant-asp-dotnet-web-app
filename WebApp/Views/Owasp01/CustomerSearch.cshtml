@@ -1,0 +1,25 @@
+﻿@model IEnumerable<WebApp.Models.Customer>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Customer Search</title>
+</head>
+<body>
+@using (Html.BeginForm(null, null, FormMethod.Post))
+{       
+    <br/><br/>
+    <span>Search Customer Id:</span>
+    @Html.TextBox("SearchText")<br/><br/>
+       
+
+    <input type="submit" value="Search"/>
+}
+</body>
+</html>

@@ -28,11 +28,14 @@ namespace WebApp.Models
         }
     }
 
+    [DbConfigurationType(typeof(DataConfiguration))]
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Tenant> Tenants { get; set; }
 
         public DbSet<Speaker> Speakers { get; set; }
+
+        public DbSet<Customer> Customers { get; set; }
 
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
@@ -119,6 +122,13 @@ namespace WebApp.Models
         public string Name { get; set; }
         public string DomainName { get; set; }
         public bool Default { get; set; }
+    }
+
+    [Table("Customer")]
+    public class Customer : BaseEntity
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 
     [Table("ASPNETSpeakers")]

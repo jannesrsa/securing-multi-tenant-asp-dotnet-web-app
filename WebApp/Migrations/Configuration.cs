@@ -83,6 +83,43 @@ namespace WebApp.Migrations
                 });
             }
 
+            if (!context.Customers.Any())
+            {
+                context.Customers.AddRange(new Customer[]
+                {
+                    new Customer()
+                    {
+                        Id = 1,
+                        FirstName = "Customer - Chris",
+                        LastName = "Customer - Love",
+                    },
+                    new Customer()
+                    {
+                        Id = 2,
+                        FirstName = "Customer - Daniel",
+                        LastName = "Customer - Egan",
+                    },
+                    new Customer()
+                    {
+                        Id = 3,
+                        FirstName = "Customer - Igor",
+                        LastName = "Customer - Minar",
+                    },
+                    new Customer()
+                    {
+                        Id = 4,
+                        FirstName = "Customer - Brad",
+                        LastName = "Customer - Green",
+                    },
+                    new Customer()
+                    {
+                        Id = 5,
+                        FirstName = "Customer - Misko",
+                        LastName = "Customer - Hevery",
+                    },
+                });
+            }
+
             base.Seed(context);
         }
     }
