@@ -1,14 +1,28 @@
-﻿using System.Web.Mvc;
+﻿using System.Threading.Tasks;
+using System.Web.Mvc;
 using WebApp.Helpers;
 using WebApp.Models;
+using WebApp.Services;
 
 namespace WebApp.Controllers
 {
     public class TokenController : Controller
     {
-        public ActionResult GetToken(string userName)
+        private readonly ITenantService _tenantService;
+
+        public TokenController(ITenantService tenantService)
         {
-            var tokenValue = JwtTokenHelper.GenerateToken(userName, out string plainToken);
+            _tenantService = tenantService;
+        }
+
+        public async Task<ActionResult> GetToken(string userName)
+        {
+            var tenentId = await _tenantService.GetTenantAsync();
+
+            var tokenValue = JwtTokenHelper.GenerateToken(
+                userName,
+                out string plainToken,
+                tenentId.DomainName);
 
             var modelData = new TokenViewModel
             {
@@ -41,6 +55,26 @@ namespace WebApp.Controllers
             };
 
             return View("ShowUser", modelData);
+        }
+
+        [HttpPost]
+        public ActionResult TestTokenFull(string tokenValue)
+        {
+            string plainToken;
+            string tenantName;
+            var username =
+                JwtTokenHelper.GetPrincipalAndTenantName
+                (tokenValue,
+                    out plainToken,
+                    out tenantName).Identity.Name;
+
+            var modelData = new TokenViewModel
+            {
+                UserName = username,
+                TenantName = tenantName,
+                PlainToken = plainToken
+            };
+            return View("ShowUserFull", modelData);
         }
     }
 }

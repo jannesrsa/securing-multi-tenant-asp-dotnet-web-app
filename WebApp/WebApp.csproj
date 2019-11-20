@@ -313,6 +313,7 @@
     <Content Include="Views\Token\GetToken.cshtml" />
     <Content Include="Views\Token\TestToken.cshtml" />
     <Content Include="Views\Token\ShowUser.cshtml" />
+    <Content Include="Views\Token\ShowUserFull.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

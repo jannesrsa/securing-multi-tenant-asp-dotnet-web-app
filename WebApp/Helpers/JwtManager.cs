@@ -29,7 +29,7 @@ namespace WebApp.Helpers
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.UserData,tenantName),
+                    new Claim(ClaimTypes.UserData, tenantName),
                 }),
 
                 Expires = now.AddMinutes(Convert.ToInt32(20)),
@@ -84,7 +84,7 @@ namespace WebApp.Helpers
         }
 
         public static ClaimsPrincipal
-                    GetPrincipalAndTenantName(
+            GetPrincipalAndTenantName(
                 string token,
                 out string plainToken,
                 out string tenantName)
