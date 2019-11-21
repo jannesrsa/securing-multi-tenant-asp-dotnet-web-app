@@ -8,6 +8,7 @@ namespace WebApp
     {
         public void Configuration(IAppBuilder app)
         {
+            IocConfig.RegisterDependencies(app);
             ConfigureAuth(app);
         }
     }

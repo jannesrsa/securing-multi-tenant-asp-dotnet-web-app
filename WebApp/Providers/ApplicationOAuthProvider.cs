@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Identity.Owin;
+﻿using Autofac;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using WebApp.Models;
 
 namespace WebApp.Providers
@@ -13,10 +14,11 @@ namespace WebApp.Providers
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
+        private ApplicationUserManager _applicationUserManager;
 
         public ApplicationOAuthProvider(string publicClientId)
         {
-            if (publicClientId == null)
+            if (string.IsNullOrWhiteSpace(publicClientId))
             {
                 throw new ArgumentNullException("publicClientId");
             }
@@ -24,11 +26,31 @@ namespace WebApp.Providers
             _publicClientId = publicClientId;
         }
 
+        public ApplicationUserManager ApplicationUserManager
+        {
+            get
+            {
+                if (_applicationUserManager == null)
+                {
+                    _applicationUserManager = IocConfig.Container.Resolve<ApplicationUserManager>();
+                }
+
+                return _applicationUserManager;
+            }
+        }
+
+        public static AuthenticationProperties CreateProperties(string userName)
+        {
+            IDictionary<string, string> data = new Dictionary<string, string>
+            {
+                { "userName", userName }
+            };
+            return new AuthenticationProperties(data);
+        }
+
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
-
-            ApplicationUser user = await userManager.FindAsync(context.UserName, context.Password);
+            ApplicationUser user = await ApplicationUserManager.FindAsync(context.UserName, context.Password);
 
             if (user == null)
             {
@@ -36,10 +58,10 @@ namespace WebApp.Providers
                 return;
             }
 
-            ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager,
+            ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(ApplicationUserManager,
                OAuthDefaults.AuthenticationType);
 
-            ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
+            ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(ApplicationUserManager,
                 CookieAuthenticationDefaults.AuthenticationType);
 
             AuthenticationProperties properties = CreateProperties(user.UserName);
@@ -82,15 +104,6 @@ namespace WebApp.Providers
             }
 
             return Task.FromResult<object>(null);
-        }
-
-        public static AuthenticationProperties CreateProperties(string userName)
-        {
-            IDictionary<string, string> data = new Dictionary<string, string>
-            {
-                { "userName", userName }
-            };
-            return new AuthenticationProperties(data);
         }
     }
 }

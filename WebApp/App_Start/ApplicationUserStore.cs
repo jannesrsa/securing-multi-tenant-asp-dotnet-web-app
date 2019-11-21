@@ -2,11 +2,11 @@
 using System;
 using System.Data.Entity;
 using System.Threading.Tasks;
+using WebApp.Models;
 
-namespace WebApp.Models
+namespace WebApp
 {
-    public class ApplicationUserStore<TUser> : UserStore<TUser>
-        where TUser : ApplicationUser
+    public class ApplicationUserStore : UserStore<ApplicationUser>
     {
         public ApplicationUserStore(DbContext context) :
             base(context)
@@ -15,7 +15,7 @@ namespace WebApp.Models
 
         public int TenantId { get; set; }
 
-        public override Task CreateAsync(TUser user)
+        public override Task CreateAsync(ApplicationUser user)
         {
             if (user == null)
             {
@@ -27,13 +27,13 @@ namespace WebApp.Models
             return base.CreateAsync(user);
         }
 
-        public override Task<TUser> FindByEmailAsync(string email)
+        public override Task<ApplicationUser> FindByEmailAsync(string email)
         {
             return GetUserAggregateAsync(i => i.TenantId == this.TenantId
                                             && i.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        public override Task<TUser> FindByNameAsync(string userName)
+        public override Task<ApplicationUser> FindByNameAsync(string userName)
         {
             return GetUserAggregateAsync(i => i.TenantId == this.TenantId
                                              && i.UserName.Equals(userName, StringComparison.InvariantCultureIgnoreCase));
