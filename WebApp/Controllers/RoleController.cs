@@ -1,30 +1,36 @@
-﻿using Microsoft.AspNet.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNet.Identity.Owin;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using WebApp.Data;
-using WebApp.Models;
 
 namespace WebApp.Controllers
 {
     public class RoleController : Controller
     {
-        //private readonly IAsyncRepository<ApplicationUser> _applicationUserRepository;
-        private readonly ApplicationUserManager _applicationUserManager;
+        private readonly ApplicationUserManager _userManager;
 
-        public RoleController(ApplicationUserManager applicationUserManager)
+        public RoleController(ApplicationUserManager userManager)
         {
-            _applicationUserManager = applicationUserManager;
+            _userManager = userManager;
+        }
+
+        public RoleController()
+        {
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
         }
 
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> AssignUserToRole(string email, string role)
         {
-            var user = await _applicationUserManager.FindByEmailAsync(email);
-            await _applicationUserManager.AddToRoleAsync(user.Id, role);
+            var user = await UserManager.FindByEmailAsync(email);
+            await UserManager.AddToRoleAsync(user.Id, role);
             return View("AssignUserToManager", "", email + ":" + role);
         }
 
